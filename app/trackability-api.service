@@ -1,0 +1,19 @@
+[Service]
+RuntimeDirectory=trackability
+
+ExecStart=/home/trackability/perl5/bin/starman --daemonize -l 127.0.0.1:5000 --pid /var/run/trackability/trackability-api.pid --error-log /var/log/trackability/starman-api.log /home/trackability/git/trackability-api/app/app.psgi
+
+Restart=always
+
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=trackability-api
+
+Type=forking
+User=trackability
+Group=trackability
+
+Environment=DANCER_CONFDIR=/home/trackability/git/trackability-api/app/ DANCER_ENVIRONMENT=production PERL5LIB=$PERL5LIB:/home/trackability/perl5/lib/perl5:/home/trackability/git/trackability-api/lib
+
+[Install]
+WantedBy=multi-user.target

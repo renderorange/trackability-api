@@ -1,0 +1,10 @@
+#!/bin/bash
+
+DIRNAME=$(dirname "$0")
+APPDIR=$(realpath "$DIRNAME")
+LIBDIR=$(realpath "$DIRNAME/../lib")
+export PERL5LIB=$LIBDIR:$PERL5LIB
+export DANCER_CONFDIR=$APPDIR
+export DANCER_ENVIRONMENT=development
+
+plackup --loader Shotgun --port 5000 "$APPDIR/app.psgi"

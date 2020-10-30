@@ -1,0 +1,12 @@
+/.well-known
+/cgi-bin
+scratch
+testing
+*.swp
+*.back
+backup/
+.trackability-apirc
+*.swp
+cover_db/
+.gitconfig
+tmp/
