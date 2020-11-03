@@ -6,6 +6,8 @@ use Scalar::Util                ();
 use HTTP::Status                ();
 use Trackability::API::Response ();
 
+use Trackability::API::Controller::Users ();
+
 our $VERSION = '0.001';
 
 BEGIN {
