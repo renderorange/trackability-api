@@ -61,6 +61,17 @@ sub conflict {
     return response;
 }
 
+sub internal_server_error {
+    my $message = shift;
+
+    # return 500 internal server error
+    header( 'Content-Type' => 'text/plain' );
+    response->{status}  = HTTP::Status::HTTP_INTERNAL_SERVER_ERROR;
+    response->{content} = $message || 'Whoops, something went wrong on our end.';
+
+    return response;
+}
+
 sub success {
     my $message = shift;
 
