@@ -11,9 +11,12 @@ use Trackability::API::DB                 ();
 use Trackability::API::Exception::Missing ();
 use Trackability::API::Exception::Invalid ();
 use Trackability::API::Crypt::Hash        ();
+use Trackability::API::Crypt::Storage     ();
+use Trackability::API::Config             ();
 
 use Try::Tiny;
 use Scalar::Util ();
+use Digest::SHA  ();
 
 use Moo;
 use MooX::ClassAttribute;
@@ -334,6 +337,122 @@ sub validate_password {
 
     my $crypt = Trackability::API::Crypt::Hash->new();
     return $crypt->validate( hash => $hash, string => $arg->{password} );
+}
+
+sub add_key {
+    my $self = shift;
+
+    unless ( Scalar::Util::blessed($self) ) {
+        Trackability::API::Exception::Invalid->throw( { message => "add_key must be called as an object method" } );
+    }
+
+    unless ( $self->id ) {
+        Trackability::API::Exception::Invalid->throw( { message => "add_key cannot be run for a nonexistent user" } );
+    }
+
+    my $crypt_hash        = Trackability::API::Crypt::Hash->new();
+    my $hash              = $crypt_hash->generate( string => rand . localtime . rand . $self->id );
+    my $token             = Digest::SHA::sha256_hex($hash);
+    my $hashed_passphrase = $crypt_hash->generate( string => $token );
+
+    my $sql = q{
+        INSERT INTO
+            users_key
+        SET
+            users_id = ?,
+            `key` = ?
+        };
+
+    my $result = try {
+        return $self->_dbh->do( $sql, undef, ( $self->id, $hashed_passphrase ) );
+    }
+    catch {
+        my $exception = $_;
+
+        # TODO: implement rollback and commit
+        die "add_key failed: $exception\n";
+    };
+
+    # build and return the key string
+    # the unencoded string is in the format: users_key.id-users.id-key
+    # TODO: this assumes the key was inserted, otherwise doesn't give an error back to the user.
+    # this needs to be expanded to let the user know there was an issue, if there was one.
+    if ($result) {
+        my $plain_key = $self->_dbh->last_insert_id . q{-} . $self->id . q{-} . $token;
+
+        my $conf          = Trackability::API::Config->get();
+        my $crypt_storage = Trackability::API::Crypt::Storage->new( secret_key => $conf->{token}{secret_key} );
+        my $encoded_key   = $crypt_storage->encode( string => $plain_key );
+
+        return $encoded_key;
+    }
+
+    return;
+}
+
+sub validate_key {
+    my $class = shift;
+    my $arg   = {
+        key => undef,
+        @_,
+    };
+
+    unless ( $arg->{key} ) {
+        Trackability::API::Exception::Missing->throw( { message => "key is required" } );
+    }
+
+    # decode key
+    my $conf          = Trackability::API::Config->get();
+    my $crypt_storage = Trackability::API::Crypt::Storage->new( secret_key => $conf->{token}{secret_key} );
+    my $plain_key     = $crypt_storage->decode( string => $arg->{key} ) || q{};
+
+    my ( $users_key_id, $users_id, $token ) = split( /-/, $plain_key );
+
+    unless ( $users_key_id && $users_id && $token ) {
+        Trackability::API::Exception::Invalid->throw( { message => "key is invalid" } );
+    }
+
+    # first, verify the user exists using the decoded key
+    my $users = $class->get( id => $users_id );
+
+    unless ( $users->[0] ) {
+        Trackability::API::Exception::Missing->throw();
+    }
+
+    # next, get the key
+    my $sql = q{
+        SELECT
+            `key`
+        FROM
+            users_key
+        WHERE
+            id = ? AND
+            users_id = ?
+    };
+
+    my $hash = try {
+        my $users_key_arrref = $class->_dbh->selectrow_arrayref( $sql, undef, ( $users_key_id, $users_id ) );
+        return $users_key_arrref->[0];
+    }
+    catch {
+        my $exception = $_;
+
+        # TODO: implement rollback and commit
+        die "validate_key failed: $exception\n";
+    };
+
+    unless ($hash) {
+        Trackability::API::Exception::Missing->throw( { message => "key does not exist" } );
+    }
+
+    my $crypt_hash = Trackability::API::Crypt::Hash->new();
+
+    # if the decoded token validates with what we have stored, return the user object to the caller.
+    if ( $crypt_hash->validate( hash => $hash, string => $token ) ) {
+        return $users;
+    }
+
+    return;
 }
 
 1;

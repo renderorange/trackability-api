@@ -31,7 +31,7 @@ sub _validate {
     my $config = shift;
 
     # verify required config sections
-    foreach my $required (qw{ database }) {
+    foreach my $required (qw{ database token }) {
         unless ( exists $config->{$required} ) {
             die "config section $required is required\n";
         }
@@ -39,7 +39,14 @@ sub _validate {
 
     # verify database values
     foreach my $required (qw{ type host port dbname username password }) {
-        unless ( exists $config->{database}{$required} && defined $config->{database}{$required} ) {
+        unless ( exists $config->{database}{$required} && $config->{database}{$required} ) {
+            die "config section database $required is required\n";
+        }
+    }
+
+    # verify token values
+    foreach my $required (qw{ secret_key }) {
+        unless ( exists $config->{token}{$required} && $config->{token}{$required} ) {
             die "config section database $required is required\n";
         }
     }

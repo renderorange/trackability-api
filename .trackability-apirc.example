@@ -5,3 +5,6 @@ port = 3306
 dbname = trackability
 username = trackability
 password = password
+
+[token]
+secret_key = simplefordevelopment
