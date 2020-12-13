@@ -7,7 +7,7 @@ use parent 'Test::More';
 
 our $VERSION = '0.001';
 
-our ( $config, $dbh );
+our ( $config, $dbh, $tempdir );
 
 my $skip_db = 0;
 
@@ -123,10 +123,11 @@ sub write_config {
     use FindBin;
     require File::Temp;
 
-    my $temp_dir = File::Temp->newdir(
+    $tempdir = File::Temp->newdir(
         DIR => $FindBin::RealBin,
+        CLEANUP => 0,
     );
-    my $rc = "$temp_dir/.trackability-apirc";
+    my $rc = "$tempdir/.trackability-apirc";
 
     require Config::Tiny;
 
@@ -139,8 +140,16 @@ sub write_config {
     return $rc;
 }
 
-# clean up the test DB after each test to make sure we have an accurate test set.
 END {
+    # clean up the tempdir for the config override.
+    if ( $tempdir ) {
+        Test::More::note( "cleaning up tempdir - $tempdir" );
+        unless ( rmdir $tempdir ) {
+            Test::More::diag( "rmdir: $!\n" );
+        }
+    }
+
+    # clean up the test DB after each test to make sure we have an accurate test set.
     unless ( $skip_db ) {
         my ( $database ) = @{ $dbh->selectrow_arrayref( 'select DATABASE()' ) };
         exit if $database ne $Trackability::API::Test::config->{database_test}{dbname};
