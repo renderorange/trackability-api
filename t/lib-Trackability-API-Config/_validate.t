@@ -17,6 +17,9 @@ my $config_expected = {
         username => 'trackability',
         password => 'password',
     },
+    token => {
+        secret_key => 'simplefordevelopment',
+    },
 };
 
 HAPPY_PATH: {
@@ -30,7 +33,7 @@ EXCEPTIONS: {
     note( 'exceptions' );
 
     subtest 'dies if missing any of the config keys' => sub {
-        plan tests => 1;
+        plan tests => 2;
 
         foreach my $required ( keys %{ $config_expected } ) {
             my $stored = delete $config_expected->{ $required };
@@ -43,7 +46,7 @@ EXCEPTIONS: {
     };
 
     subtest 'dies if missing any of the config sub keys' => sub {
-        plan tests => 6;
+        plan tests => 7;
 
         foreach my $required ( keys %{ $config_expected } ) {
             foreach my $required_sub_key ( keys %{ $config_expected->{$required} } ) {
