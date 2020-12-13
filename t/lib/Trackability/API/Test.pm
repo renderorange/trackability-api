@@ -151,6 +151,7 @@ END {
             $dbh->do( 'ALTER TABLE users AUTO_INCREMENT = 1' );
             $dbh->do( 'ALTER TABLE collections AUTO_INCREMENT = 1' );
             $dbh->do( 'ALTER TABLE events AUTO_INCREMENT = 1' );
+            $dbh->do( 'ALTER TABLE users_key AUTO_INCREMENT = 1' );
         }
         else {
             Test::More::note( 'ERROR: did not delete users table' );
