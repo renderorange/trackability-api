@@ -12,10 +12,12 @@ my @required_modules = qw{
     Data::Structure::Util
     DateTime::Format::Strptime
     DBI
+    Digest::SHA
     Email::Valid
     FindBin
     Getopt::Long
     HTTP::Status
+    JSON::Parse
     List::MoreUtils
     Moo
     MooX::ClassAttribute
@@ -26,6 +28,7 @@ my @required_modules = qw{
     Plack::Middleware::TrailingSlashKiller
     Pod::Usage
     Scalar::Util
+    Session::Storage::Secure
     Starman
     strictures
     Term::ReadKey
