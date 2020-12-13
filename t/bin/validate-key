@@ -1,0 +1,84 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use FindBin ();
+use lib "$FindBin::RealBin/../../lib";
+use Trackability::API::Model::Users;
+
+use Getopt::Long  ();
+use Pod::Usage    ();
+use Try::Tiny;
+use Data::Dumper  ();
+
+my $VERSION = '0.001';
+
+my %opt = ();
+Getopt::Long::GetOptions(
+    \%opt,
+    'key=s',
+    'version' => sub { print "$0 version $VERSION\n"; exit 0 },
+    'help|?',
+) or Pod::Usage::pod2usage( -exitval => 1 );
+
+Pod::Usage::pod2usage( -exitval => 0, -verbose => 1 ) if $opt{help};
+Pod::Usage::pod2usage( -exitval => 1, -verbose => 0 ) unless $opt{key};
+
+my $users = try {
+    return Trackability::API::Model::Users->validate_key( key => $opt{key} );
+}
+catch {
+    die "$0: " . $_ . "\n";
+};
+
+if ($users->[0]) {
+    print "key is valid\n" .
+          "authenticated user data:\n" .
+          Data::Dumper::Dumper($users->[0]);
+}
+else {
+    print "key is not valid\n";
+}
+
+exit 0;
+
+__END__
+
+=pod
+
+=head1 NAME
+
+validate-key - test validating an API key
+
+=head1 SYNOPSIS
+
+ validate-key [--key <key>] [--help]
+
+=head1 DESCRIPTION
+
+C<validate-key> is a program to test validating an API key using the Users Model.
+
+=head1 OPTIONS
+
+=over
+
+=item --key
+
+The encoded API key.
+
+=item --version
+
+Print the version of this program.
+
+=item --help
+
+Print the help menu.
+
+=back
+
+=head1 AUTHOR
+
+Blaine Motsinger C<blaine@renderorange.com>
+
+=cut
