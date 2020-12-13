@@ -18,12 +18,17 @@ options '/users/:id' => sub {
 };
 
 get '/users/:id' => sub {
-    my $id = route_parameters->get('id');
+    my $id       = route_parameters->get('id');
+    my $users_id = vars->{users_id};
 
     my $users = Trackability::API::Model::Users->get( id => $id );
 
     unless ($users) {
         return Trackability::API::Response::not_found();
+    }
+
+    unless ( $users->[0]->id == $users_id ) {
+        return Trackability::API::Response::forbidden();
     }
 
     # rearrange the data structure to return
@@ -41,12 +46,17 @@ get '/users/:id' => sub {
 };
 
 put '/users/:id' => sub {
-    my $id = route_parameters->get('id');
+    my $id       = route_parameters->get('id');
+    my $users_id = vars->{users_id};
 
     my $users = Trackability::API::Model::Users->get( id => $id );
 
     unless ($users) {
         return Trackability::API::Response::not_found();
+    }
+
+    unless ( $users->[0]->id == $users_id ) {
+        return Trackability::API::Response::forbidden();
     }
 
     my $name     = body_parameters->get('name');
