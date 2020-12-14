@@ -41,6 +41,13 @@ sub import {
 
     require Test::Warnings;
 
+    # set dancer env variables for API integration tests
+    require Cwd;
+    my $module_path = Cwd::realpath(__FILE__);
+    $module_path =~ s/\w+\.pm//;
+    $ENV{DANCER_CONFDIR} = Cwd::realpath( $module_path . './../../../../app' );
+    $ENV{DANCER_ENVIRONMENT} = 'development';
+
     return;
 }
 
