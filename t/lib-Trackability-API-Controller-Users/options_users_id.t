@@ -1,23 +1,14 @@
 use strict;
 use warnings;
 
-BEGIN {
-    require FindBin;
-    $ENV{DANCER_CONFDIR} = "$FindBin::RealBin/../../app";
-    $ENV{DANCER_ENVIRONMENT} = 'development';
-}
-
-use lib "$FindBin::Bin/../../lib", "$FindBin::Bin/../lib";
+use FindBin;
+use lib "$FindBin::RealBin/../../lib", "$FindBin::RealBin/../lib";
 use Trackability::API::Test;
-use Test::Deep;
+use Trackability::API::Model::Users ();
+use Trackability::API               ();
+
 use Plack::Test;
 use HTTP::Request ();
-
-use Trackability::API ();
-use JSON   ();
-use Encode ();
-
-use Trackability::API::Model::Users;
 
 my $user_one = Trackability::API::Model::Users->new(
     name => 'user one',
@@ -25,8 +16,7 @@ my $user_one = Trackability::API::Model::Users->new(
 );
 my $password = 'Testtesttest1';
 $user_one->store();
-$user_one->store_password( password => $password );
-$user_one->store();
+my $key = $user_one->add_key();
 
 my $method   = 'OPTIONS';
 my $endpoint = '/users/1';
@@ -34,7 +24,11 @@ my $endpoint = '/users/1';
 my $app  = Trackability::API->to_app;
 my $test = Plack::Test->create( $app );
 
-my $request = HTTP::Request->new( $method, $endpoint );
+my $headers = [
+    'Authorization' => 'Token ' . $key,
+];
+my $request = HTTP::Request->new( $method, $endpoint, $headers );
+
 my $response = $test->request( $request );
 
 ok( $response->is_success, sprintf( '%s %s was successful', $method, $endpoint ) );

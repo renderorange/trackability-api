@@ -1,28 +1,22 @@
 use strict;
 use warnings;
 
-BEGIN {
-    require FindBin;
-    $ENV{DANCER_CONFDIR} = "$FindBin::Bin/../../app";
-    $ENV{DANCER_ENVIRONMENT} = 'development';
-}
-
-use lib "$FindBin::Bin/../../lib", "$FindBin::Bin/../lib";
+use FindBin;
+use lib "$FindBin::RealBin/../../lib", "$FindBin::RealBin/../lib";
 use Trackability::API::Test;
+use Trackability::API::Model::Users ();
+use Trackability::API               ();
 
 use Plack::Test;
 use HTTP::Request ();
-
-use Trackability::API ();
 use JSON ();
-
-use Trackability::API::Model::Users;
 
 my $user_one = Trackability::API::Model::Users->new(
     name => 'user one',
     email => 'user-one@example.com',
 );
 $user_one->store();
+my $key = $user_one->add_key();
 
 my $method   = 'GET';
 my $endpoint = '/users/1';
@@ -30,7 +24,10 @@ my $endpoint = '/users/1';
 my $app  = Trackability::API->to_app;
 my $test = Plack::Test->create( $app );
 
-my $request = HTTP::Request->new( $method, $endpoint );
+my $headers = [
+    'Authorization' => 'Token ' . $key,
+];
+my $request = HTTP::Request->new( $method, $endpoint, $headers );
 
 my $response = $test->request( $request );
 my $content  = $response->content;
@@ -54,5 +51,6 @@ my $expected_content =
     };
 
 cmp_deeply( $decoded_content, $expected_content, 'decoded content contains expected data structure' );
+ok( !exists $decoded_content->{users}->[1], 'only the authenticated user was returned' );
 
 done_testing();

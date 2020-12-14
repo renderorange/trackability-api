@@ -1,30 +1,23 @@
 use strict;
 use warnings;
 
-BEGIN {
-    require FindBin;
-    $ENV{DANCER_CONFDIR} = "$FindBin::Bin/../../app";
-    $ENV{DANCER_ENVIRONMENT} = 'development';
-}
-
-use lib "$FindBin::Bin/../../lib", "$FindBin::Bin/../lib";
+use FindBin;
+use lib "$FindBin::RealBin/../../lib", "$FindBin::RealBin/../lib";
 use Trackability::API::Test;
-use Test::Deep;
+use Trackability::API::Model::Users ();
+use Trackability::API               ();
 
 use Plack::Test;
 use HTTP::Request ();
-
-use Trackability::API ();
 use JSON   ();
 use Encode ();
-
-use Trackability::API::Model::Users;
 
 my $user_one = Trackability::API::Model::Users->new(
     name => 'user one',
     email => 'user-one@example.com',
 );
 $user_one->store();
+my $key = $user_one->add_key();
 
 my $method   = 'PUT';
 my $endpoint = '/users/1';
@@ -32,7 +25,10 @@ my $endpoint = '/users/1';
 my $app  = Trackability::API->to_app;
 my $test = Plack::Test->create( $app );
 
-my $request = HTTP::Request->new( $method, $endpoint );
+my $headers = [
+    'Authorization' => 'Token ' . $key,
+];
+my $request = HTTP::Request->new( $method, $endpoint, $headers );
 
 my $data = { name => 'changed', email => 'changed@example.com' };
 my $encoded_data = Encode::encode_utf8( JSON::encode_json( $data ) );
