@@ -378,7 +378,7 @@ sub add_key {
     # TODO: this assumes the key was inserted, otherwise doesn't give an error back to the user.
     # this needs to be expanded to let the user know there was an issue, if there was one.
     if ($result) {
-        my $plain_key = $self->_dbh->last_insert_id . q{-} . $self->id . q{-} . $token;
+        my $plain_key = $self->_dbh->last_insert_id( undef, undef, 'users_key', 'id' ) . q{-} . $self->id . q{-} . $token;
 
         my $conf          = Trackability::API::Config->get();
         my $crypt_storage = Trackability::API::Crypt::Storage->new( secret_key => $conf->{token}{secret_key} );
