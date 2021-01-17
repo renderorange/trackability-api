@@ -41,6 +41,8 @@ get '/collections' => sub {
             }
         }
 
+        # TODO: update this like get events, to pass query straight in.
+        # no need to have this in an else.
         $collections = Trackability::API::Model::Collections->get( %{$query}, users_id => $users_id );
     }
     else {
@@ -214,11 +216,11 @@ get '/collections/:id/events' => sub {
         return Trackability::API::Response::forbidden();
     }
 
-    my $events;
-
+    # validate the query params
     if ( keys %{$query} ) {
         my @valid_keys = qw(
             id
+            created
         );
 
         foreach my $key ( keys %{$query} ) {
@@ -227,11 +229,31 @@ get '/collections/:id/events' => sub {
             }
         }
 
-        $events = Trackability::API::Model::Events->get( %{$query}, collections_id => $id );
+        # validate the created query
+        if ( defined $query->{created} ) {
+
+            # to allow for multiple definitions of created, we need to specifically retrieve it from the query.
+            # the query_parameters method returns a hashref, which will overwrite the first definition.
+            my @created = query_parameters->get_all('created');
+
+            if ( List::MoreUtils::any { $_ && $_ !~ /^\d+$/ } @created ) {
+                return Trackability::API::Response::bad_request('The created parameter must be an epoch timestamp.');
+            }
+
+            delete $query->{created};
+
+            # if only 1 is defined, assume they want an exact match for that date to the created_at column.
+            # if 2 are defined, then they want between created[0] and created[1].
+            if ( scalar @created == 1 ) {
+                $query->{created_at} = $created[0];
+            }
+            else {
+                $query->{created_at} = [ $created[0], $created[1] ];
+            }
+        }
     }
-    else {
-        $events = Trackability::API::Model::Events->get( collections_id => $id );
-    }
+
+    my $events = Trackability::API::Model::Events->get( %{$query}, collections_id => $id );
 
     unless ($events) {
         return Trackability::API::Response::not_found();

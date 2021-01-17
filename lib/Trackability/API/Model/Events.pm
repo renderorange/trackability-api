@@ -4,8 +4,7 @@ use strictures version => 2;
 
 use Types::Common::Numeric qw{ PositiveInt };
 use Types::Common::String qw{ NonEmptyStr };
-use JSON::Parse                ();
-use DateTime::Format::Strptime ();
+use JSON::Parse ();
 
 use Trackability::API::DB                 ();
 use Trackability::API::Exception::Invalid ();
@@ -49,22 +48,12 @@ has data => (
 
 has created_at => (
     is  => 'rwp',
-    isa => sub {
-        my $strp = DateTime::Format::Strptime->new( pattern => '%Y-%m-%d %H:%M:%S' );
-        unless ( $strp->parse_datetime( $_[0] ) ) {
-            die "not a valid created_at type\n";
-        }
-    },
+    isa => PositiveInt,
 );
 
 has updated_at => (
     is  => 'rwp',
-    isa => sub {
-        my $strp = DateTime::Format::Strptime->new( pattern => '%Y-%m-%d %H:%M:%S' );
-        unless ( $strp->parse_datetime( $_[0] ) ) {
-            die "not a valid updated_at type\n";
-        }
-    },
+    isa => PositiveInt,
 );
 
 class_has _dbh => (
@@ -79,6 +68,7 @@ sub get {
     my $arg   = {
         id             => undef,
         collections_id => undef,
+        created_at     => undef,
         @_,
     };
 
@@ -87,13 +77,45 @@ sub get {
             id,
             collections_id,
             data,
-            created_at,
-            updated_at
+            UNIX_TIMESTAMP(created_at) as created_at,
+            UNIX_TIMESTAMP(updated_at) as updated_at
         FROM
             events
     };
 
     my ( @where, @bind_values );
+
+    # special handling of created_at, since we need to convert
+    # from unixtime to datetime.
+    my $created_at = delete $arg->{created_at};
+
+    # allow a start and end epoch time to do date searches between
+    if ( $created_at && ref $created_at ) {
+
+        # if both are defined, select everything including and between them
+        if ( $created_at->[0] && $created_at->[1] ) {
+            push @where, "created_at >= FROM_UNIXTIME(?) AND created_at <= FROM_UNIXTIME(?)";
+            push @bind_values, ( $created_at->[0], $created_at->[1] );
+        }
+
+        # if the first is undef, select everything older than and equal to the second
+        elsif ( !$created_at->[0] && $created_at->[1] ) {
+            push @where,       "created_at <= FROM_UNIXTIME(?)";
+            push @bind_values, $created_at->[1];
+        }
+
+        # if the second is undef, select everything newer than and equal to the first
+        elsif ( !$created_at->[1] && $created_at->[0] ) {
+            push @where,       "created_at >= FROM_UNIXTIME(?)";
+            push @bind_values, $created_at->[0];
+        }
+    }
+
+    # otherwise, an exact match on created_at
+    elsif ($created_at) {
+        push @where,       "created_at = FROM_UNIXTIME(?)";
+        push @bind_values, $created_at;
+    }
 
     foreach my $key ( keys %{$arg} ) {
         unless ( defined $arg->{$key} ) {
@@ -202,13 +224,16 @@ sub _update_object {
     }
 
     # always get each of the updatable columns for the object
-    my @columns = (qw{ collections_id data created_at updated_at });
+    my @columns = (qw{ collections_id data });
 
-    my $query = 'select ' . ( join ', ', @columns ) . ' from events where id = ?';
+    my $query =
+          'select '
+        . ( join ', ', @columns, 'UNIX_TIMESTAMP(created_at) as created_at', 'UNIX_TIMESTAMP(updated_at) as updated_at' )
+        . ' from events where id = ?';
 
     my $set_record = $self->_dbh->selectrow_hashref( $query, undef, $self->id );
 
-    foreach my $update (@columns) {
+    foreach my $update ( @columns, 'created_at', 'updated_at' ) {
         my $setter = '_set_' . $update;
         $self->$setter( $set_record->{$update} );
     }

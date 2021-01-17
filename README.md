@@ -11,7 +11,6 @@ Cwd
 Crypt::PBKDF2
 Dancer2
 Data::Structure::Util
-DateTime::Format::Strptime
 DBI
 Digest::SHA
 Email::Valid

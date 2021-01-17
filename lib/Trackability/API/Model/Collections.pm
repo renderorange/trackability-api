@@ -4,7 +4,6 @@ use strictures version => 2;
 
 use Types::Common::Numeric qw{ PositiveInt };
 use Types::Common::String qw{ NonEmptyStr };
-use DateTime::Format::Strptime ();
 
 use Trackability::API::DB                 ();
 use Trackability::API::Exception::Missing ();
@@ -40,22 +39,12 @@ has users_id => (
 
 has created_at => (
     is  => 'rwp',
-    isa => sub {
-        my $strp = DateTime::Format::Strptime->new( pattern => '%Y-%m-%d %H:%M:%S' );
-        unless ( $strp->parse_datetime( $_[0] ) ) {
-            die "not a valid created_at type\n";
-        }
-    },
+    isa => PositiveInt,
 );
 
 has updated_at => (
     is  => 'rwp',
-    isa => sub {
-        my $strp = DateTime::Format::Strptime->new( pattern => '%Y-%m-%d %H:%M:%S' );
-        unless ( $strp->parse_datetime( $_[0] ) ) {
-            die "not a valid updated_at type\n";
-        }
-    },
+    isa => PositiveInt,
 );
 
 class_has _dbh => (
@@ -79,8 +68,8 @@ sub get {
             id,
             name,
             users_id,
-            created_at,
-            updated_at
+            UNIX_TIMESTAMP(created_at) as created_at,
+            UNIX_TIMESTAMP(updated_at) as updated_at
         FROM
             collections
     };
@@ -178,13 +167,16 @@ sub _update_object {
     }
 
     # always get each of the updatable columns for the object
-    my @columns = (qw{ name users_id created_at updated_at });
+    my @columns = (qw{ name users_id });
 
-    my $query = 'select ' . ( join ', ', @columns ) . ' from collections where id = ?';
+    my $query =
+          'select '
+        . ( join ', ', @columns, 'UNIX_TIMESTAMP(created_at) as created_at', 'UNIX_TIMESTAMP(updated_at) as updated_at' )
+        . ' from collections where id = ?';
 
     my $collection_record = $self->_dbh->selectrow_hashref( $query, undef, $self->id );
 
-    foreach my $update (@columns) {
+    foreach my $update ( @columns, 'created_at', 'updated_at' ) {
         my $setter = '_set_' . $update;
         $self->$setter( $collection_record->{$update} );
     }
