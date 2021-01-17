@@ -24,7 +24,7 @@ ok( $user->id, 'user object now contains id' );
 ok( $user->created_at, 'user object now contains created_at' );
 ok( $user->updated_at, 'user object now contains updated_at' );
 
-my $user_from_db = $Trackability::API::Test::dbh->selectrow_hashref( "select * from users where id = ?", undef, ( $user->id ) );
+my $user_from_db = $Trackability::API::Test::dbh->selectrow_hashref( "select id, email, name, UNIX_TIMESTAMP(created_at) as created_at, UNIX_TIMESTAMP(updated_at) as updated_at from users where id = ?", undef, ( $user->id ) );
 
 ok( $user->email eq $user_from_db->{email}, 'user object and db match email' );
 ok( $user->name eq $user_from_db->{name}, 'user object and db match name' );

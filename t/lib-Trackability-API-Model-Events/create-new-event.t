@@ -29,7 +29,7 @@ my $event = Trackability::API::Model::Events->new(
 $ret = $event->store();
 ok( $ret, 'created and stored event' );
 
-my $event_from_db = $Trackability::API::Test::dbh->selectrow_hashref( "select * from events where id = ?", undef, ( $event->id ) );
+my $event_from_db = $Trackability::API::Test::dbh->selectrow_hashref( "select id, collections_id, data, UNIX_TIMESTAMP(created_at) as created_at, UNIX_TIMESTAMP(updated_at) as updated_at from events where id = ?", undef, ( $event->id ) );
 
 ok( $event->id eq $event_from_db->{id}, 'event object and db match id' );
 ok( $event->collections_id eq $event_from_db->{collections_id}, 'event object and db match collections_id' );

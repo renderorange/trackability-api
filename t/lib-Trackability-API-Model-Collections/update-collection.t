@@ -33,7 +33,7 @@ $collection->name( 'test collection updated' );
 $ret = $collection->store();
 ok( $ret, 'updated collection' );
 
-my $collection_from_db = $Trackability::API::Test::dbh->selectrow_hashref( "select * from collections where id = ?", undef, ( $collection->id ) );
+my $collection_from_db = $Trackability::API::Test::dbh->selectrow_hashref( "select name, UNIX_TIMESTAMP(created_at) as created_at, UNIX_TIMESTAMP(updated_at) as updated_at from collections where id = ?", undef, ( $collection->id ) );
 
 ok( $collection->name eq $collection_from_db->{name}, 'collection object and db match name after update' );
 ok( $created_at eq $collection->{created_at} &&

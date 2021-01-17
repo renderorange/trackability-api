@@ -25,7 +25,7 @@ $user->email( 'foo2@bar.tld' );
 $user->store();
 note( 'updated email and stored to db' );
 
-my $user_from_db = $Trackability::API::Test::dbh->selectrow_hashref( "select * from users where id = ?", undef, ( $user->id ) );
+my $user_from_db = $Trackability::API::Test::dbh->selectrow_hashref( "select email, UNIX_TIMESTAMP(created_at) as created_at, UNIX_TIMESTAMP(updated_at) as updated_at from users where id = ?", undef, ( $user->id ) );
 
 ok( $user->email eq $user_from_db->{email}, 'user object and db match email after update' );
 ok( $created_at eq $user->{created_at} &&

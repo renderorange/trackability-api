@@ -49,7 +49,7 @@ $event->data( '{"one":1,"two":2,"three":3}' );
 $ret = $event->store();
 ok( $ret, 'updated event' );
 
-my $event_from_db = $Trackability::API::Test::dbh->selectrow_hashref( "select * from events where id = ?", undef, ( $event->id ) );
+my $event_from_db = $Trackability::API::Test::dbh->selectrow_hashref( "select collections_id, data, UNIX_TIMESTAMP(created_at) as created_at, UNIX_TIMESTAMP(updated_at) as updated_at from events where id = ?", undef, ( $event->id ) );
 
 ok( $event->collections_id eq $event_from_db->{collections_id}, 'event object and db match collections_id after update' );
 ok( $collections_id ne $event->collections_id &&

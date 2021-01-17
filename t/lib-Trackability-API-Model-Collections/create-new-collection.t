@@ -21,7 +21,7 @@ my $collection = Trackability::API::Model::Collections->new(
 $ret = $collection->store();
 ok( $ret, 'created and stored collection' );
 
-my $collection_from_db = $Trackability::API::Test::dbh->selectrow_hashref( "select * from collections where id = ?", undef, ( $collection->id ) );
+my $collection_from_db = $Trackability::API::Test::dbh->selectrow_hashref( "select id, name, users_id, UNIX_TIMESTAMP(created_at) as created_at, UNIX_TIMESTAMP(updated_at) as updated_at from collections where id = ?", undef, ( $collection->id ) );
 
 ok( $collection->id eq $collection_from_db->{id}, 'collection object and db match id' );
 ok( $collection->name eq $collection_from_db->{name}, 'collection object and db match name' );
