@@ -121,6 +121,9 @@ forbid = last left right no abstract contract record second close
 # don't prohibit constant pragma
 [-ValuesAndExpressions::ProhibitConstantPragma]
 
+# don't prohibit useless topic ($_)
+[-RegularExpressions::ProhibitUselessTopic]
+
 
 ## TODO: re-evaluate these
 # Write `q{}' instead of `'''.
