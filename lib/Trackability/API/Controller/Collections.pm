@@ -256,7 +256,7 @@ get '/collections/:id/events' => sub {
     my $events = Trackability::API::Model::Events->get( %{$query}, collections_id => $id );
 
     unless ($events) {
-        return Trackability::API::Response::not_found();
+        return { events => [] };
     }
 
     # rearrange the data structure to return
