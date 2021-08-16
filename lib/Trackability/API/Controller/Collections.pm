@@ -50,7 +50,7 @@ get '/collections' => sub {
     }
 
     unless ($collections) {
-        return Trackability::API::Response::not_found();
+        return { collections => [] };
     }
 
     # rearrange the data structure to return
