@@ -9,6 +9,7 @@ our $VERSION = '0.001';
 sub new {
     my $class = shift;
 
+    # TODO: update to bcrypt
     my $self = {
         _hash_obj => Crypt::PBKDF2->new(
             hash_class => 'HMACSHA1',
