@@ -2,9 +2,9 @@
 
 ## DESCRIPTION
 
-trackability-api is a stripped down version of a similarly named previous project with much loftier goals.  Removed in this version is user account registration, login, account verification, and password reset.  The database schema for this project is also missing several tables and columns from the original.  This project's frontend counterpart, trackability-web, is also archived but is not publicly available.
+trackability-api is a simple API for storing and retrieving arbitrary JSON data.
 
-I split this codebase with the purpose of deploying an API capable of storing and serving arbitrary JSON data from various IoT devices around my house.
+I originally wrote this codebase with the purpose of deploying an API for various IoT devices around my house.
 
 Its use isn't limited to IoT devices, but can be used for anything from storing server monitoring metrics, to daily mood/sleep data, to spending habits.  Anything you want to store, in the form of a JSON datastructure, can be stored and later retrieved for analysis.
 
