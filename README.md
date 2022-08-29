@@ -2,7 +2,7 @@
 
 ## DESCRIPTION
 
-trackability-api is a simple API for storing and retrieving arbitrary JSON data.
+trackability-api is an API for storing and retrieving arbitrary JSON data.
 
 I originally wrote this codebase with the purpose of deploying an API for various IoT devices around my house.
 
@@ -98,6 +98,10 @@ enter the password for hello@blainem.com:
 ~/git/trackability-api/bin$ perl add-key --id 1
 key: 2161747092~~write-it-down-and-keep-it-secret-keep-it-safe
 ```
+
+## EXAMPLES
+
+TODO
 
 ## LICENSE AND COPYRIGHT
 
