@@ -3,8 +3,8 @@ package Trackability::API::Model::Events;
 use strictures version => 2;
 
 use Types::Common::Numeric qw{ PositiveInt };
-use Types::Common::String qw{ NonEmptyStr };
-use JSON::Parse ();
+use Types::Common::String  qw{ NonEmptyStr };
+use JSON::Parse            ();
 
 use Trackability::API::DB                 ();
 use Trackability::API::Exception::Invalid ();

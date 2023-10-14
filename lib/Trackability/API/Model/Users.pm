@@ -3,8 +3,8 @@ package Trackability::API::Model::Users;
 use strictures version => 2;
 
 use Types::Common::Numeric qw{ PositiveInt };
-use Types::Common::String qw{ NonEmptyStr };
-use Email::Valid ();
+use Types::Common::String  qw{ NonEmptyStr };
+use Email::Valid           ();
 
 use Trackability::API::DB                 ();
 use Trackability::API::Exception::Missing ();
