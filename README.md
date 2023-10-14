@@ -89,7 +89,7 @@ $ chmod 600 .trackability-apirc
 
 ```
 ~/git/trackability-api/bin$ perl add-user --name 'Blaine Motsinger' --email 'hello@blainem.com'
-enter the password for hello@blainem.com:
+user 1 created
 ```
 
 ### add a new API key for the new user

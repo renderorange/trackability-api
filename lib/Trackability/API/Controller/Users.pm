@@ -59,19 +59,17 @@ put '/users/:id' => sub {
         return Trackability::API::Response::forbidden();
     }
 
-    my $name     = body_parameters->get('name');
-    my $password = body_parameters->get('password');
-    my $email    = body_parameters->get('email');
+    my $name  = body_parameters->get('name');
+    my $email = body_parameters->get('email');
 
     # TODO: verify header for json is present.
 
-    unless ( defined $name || defined $password || defined $email ) {
-        return Trackability::API::Response::bad_request('The name, password, or email parameter is required.');
+    unless ( defined $name || defined $email ) {
+        return Trackability::API::Response::bad_request('The name and email parameters are required.');
     }
 
     my @valid_parameters = qw(
         name
-        password
         email
     );
 
@@ -99,19 +97,7 @@ put '/users/:id' => sub {
         $users->[0]->email($email);
     }
 
-    if ($password) {
-        $users->[0]->check_password( password => $password );
-    }
-
     $users->[0]->store();
-
-    # this isn't ideal having to check the password, store, then store password.
-    # the issue is the _update_object call inside of store_password updating the object to
-    # overwrite the values before storing the values we already set.
-    # ideally, the way this works get rewritten.
-    if ($password) {
-        $users->[0]->store_password( password => $password );
-    }
 
     # rearrange the data structure to return
     Data::Structure::Util::unbless($users);

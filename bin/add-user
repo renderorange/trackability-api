@@ -7,9 +7,8 @@ use FindBin ();
 use lib "$FindBin::RealBin/../lib";
 use Trackability::API::Model::Users;
 
-use Getopt::Long  ();
-use Pod::Usage    ();
-use Term::ReadKey ();
+use Getopt::Long ();
+use Pod::Usage   ();
 use Try::Tiny;
 
 my $VERSION = '0.001';
@@ -29,25 +28,10 @@ Pod::Usage::pod2usage( -exitval => 1, -verbose => 0 ) unless $opt{name} and $opt
 die "$0: user " . $opt{email} . " already exists\n"
     if Trackability::API::Model::Users->get( email => $opt{email} );
 
-print "enter the password for " . $opt{email} . ": ";
-
-Term::ReadKey::ReadMode('noecho');
-chomp( my $password = <STDIN> );
-Term::ReadKey::ReadMode(0);
-print "\n";
-
 my $user = Trackability::API::Model::Users->new(
     name  => $opt{name},
     email => $opt{email},
 );
-
-try {
-    $user->check_password( password => $password );
-}
-catch {
-    my $exception = $_;
-    die "$0: " . $exception->message . "\n";
-};
 
 try {
     $user->store();
@@ -57,17 +41,7 @@ catch {
     die "$0: " . $exception->message . "\n";
 };
 
-
-my $ret = try {
-    return $user->store_password( password => $password );
-}
-catch {
-    my $exception = $_;
-    die "$0: " . $exception->message . "\n";
-};
-
-die "$0: set password failed\n"
-    unless $ret;
+print "user $user->{id} created\n";
 
 exit 0;
 
