@@ -11,8 +11,8 @@ use Data::Structure::Util ();
 our $VERSION = '0.001';
 
 options '/users/:id' => sub {
-    header( allow          => 'GET,PUT,OPTIONS' );
-    header( 'Content-Type' => 'text/plain' );
+    response_header( allow          => 'GET,PUT,OPTIONS' );
+    response_header( 'Content-Type' => 'text/plain' );
 
     return;
 };

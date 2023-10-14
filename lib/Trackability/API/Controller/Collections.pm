@@ -13,8 +13,8 @@ use Try::Tiny;
 our $VERSION = '0.001';
 
 options '/collections' => sub {
-    header( allow          => 'GET,POST,OPTIONS' );
-    header( 'Content-Type' => 'text/plain' );
+    response_header( allow          => 'GET,POST,OPTIONS' );
+    response_header( 'Content-Type' => 'text/plain' );
 
     return;
 };
@@ -113,8 +113,8 @@ post '/collections' => sub {
 };
 
 options '/collections/:id' => sub {
-    header( allow          => 'GET,PUT,OPTIONS' );
-    header( 'Content-Type' => 'text/plain' );
+    response_header( allow          => 'GET,PUT,OPTIONS' );
+    response_header( 'Content-Type' => 'text/plain' );
 
     return;
 };
@@ -195,8 +195,8 @@ put '/collections/:id' => sub {
 };
 
 options '/collections/:id/events' => sub {
-    header( allow          => 'GET,POST,OPTIONS' );
-    header( 'Content-Type' => 'text/plain' );
+    response_header( allow          => 'GET,POST,OPTIONS' );
+    response_header( 'Content-Type' => 'text/plain' );
 
     return;
 };
@@ -334,8 +334,8 @@ post '/collections/:id/events' => sub {
 };
 
 options '/collections/:collections_id/events/:events_id' => sub {
-    header( allow          => 'GET,OPTIONS' );
-    header( 'Content-Type' => 'text/plain' );
+    response_header( allow          => 'GET,OPTIONS' );
+    response_header( 'Content-Type' => 'text/plain' );
 
     return;
 };
