@@ -60,17 +60,11 @@ ok( $response->is_success, sprintf( '%s %s was successful', $method, $endpoint )
 my $decoded_content = JSON::decode_json $content;
 my $expected_content =
     {
-        'collections' => [
-            {
-                '_meta' => {
-                    'id' => $collection_one->id,
-                    'name' => $collection_one->name,
-                    'users_id' => $collection_one->users_id,
-                    'updated_at' => $collection_one->updated_at,
-                    'created_at' => $collection_one->created_at,
-                },
-            },
-        ],
+        id => $collection_one->id,
+        name => $collection_one->name,
+        users_id => $collection_one->users_id,
+        updated_at => $collection_one->updated_at,
+        created_at => $collection_one->created_at,
     };
 
 cmp_deeply( $decoded_content, $expected_content, 'decoded content contains expected data structure' );

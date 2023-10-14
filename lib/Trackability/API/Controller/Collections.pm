@@ -50,23 +50,12 @@ get '/collections' => sub {
     }
 
     unless ($collections) {
-        return { collections => [] };
+        return [];
     }
 
-    # rearrange the data structure to return
     Data::Structure::Util::unbless($collections);
 
-    foreach my $collection ( @{$collections} ) {
-        $collection->{_meta}{id}         = delete $collection->{id};
-        $collection->{_meta}{name}       = delete $collection->{name};
-        $collection->{_meta}{users_id}   = delete $collection->{users_id};
-        $collection->{_meta}{created_at} = delete $collection->{created_at};
-        $collection->{_meta}{updated_at} = delete $collection->{updated_at};
-    }
-
-    my $return_data = { collections => $collections };
-
-    return $return_data;
+    return $collections;
 };
 
 post '/collections' => sub {
@@ -98,18 +87,9 @@ post '/collections' => sub {
 
     $collection->store();
 
-    # rearrange the data structure to return
     Data::Structure::Util::unbless($collection);
 
-    $collection->{_meta}{id}         = delete $collection->{id};
-    $collection->{_meta}{name}       = delete $collection->{name};
-    $collection->{_meta}{users_id}   = delete $collection->{users_id};
-    $collection->{_meta}{created_at} = delete $collection->{created_at};
-    $collection->{_meta}{updated_at} = delete $collection->{updated_at};
-
-    my $return_data = { collections => [$collection] };
-
-    return $return_data;
+    return $collection;
 };
 
 options '/collections/:id' => sub {
@@ -133,18 +113,9 @@ get '/collections/:id' => sub {
         return Trackability::API::Response::forbidden();
     }
 
-    # rearrange the data structure to return
     Data::Structure::Util::unbless($collections);
 
-    $collections->[0]{_meta}{id}         = delete $collections->[0]{id};
-    $collections->[0]{_meta}{name}       = delete $collections->[0]{name};
-    $collections->[0]{_meta}{users_id}   = delete $collections->[0]{users_id};
-    $collections->[0]{_meta}{created_at} = delete $collections->[0]{created_at};
-    $collections->[0]{_meta}{updated_at} = delete $collections->[0]{updated_at};
-
-    my $return_data = { collections => [ $collections->[0] ] };
-
-    return $return_data;
+    return $collections->[0];
 };
 
 put '/collections/:id' => sub {
@@ -180,18 +151,9 @@ put '/collections/:id' => sub {
     $collections->[0]->name($name);
     $collections->[0]->store();
 
-    # rearrange the data structure to return
     Data::Structure::Util::unbless($collections);
 
-    $collections->[0]{_meta}{id}         = delete $collections->[0]{id};
-    $collections->[0]{_meta}{name}       = delete $collections->[0]{name};
-    $collections->[0]{_meta}{users_id}   = delete $collections->[0]{users_id};
-    $collections->[0]{_meta}{created_at} = delete $collections->[0]{created_at};
-    $collections->[0]{_meta}{updated_at} = delete $collections->[0]{updated_at};
-
-    my $return_data = { collections => [ $collections->[0] ] };
-
-    return $return_data;
+    return $collections->[0];
 };
 
 options '/collections/:id/events' => sub {
@@ -256,30 +218,24 @@ get '/collections/:id/events' => sub {
     my $events = Trackability::API::Model::Events->get( %{$query}, collections_id => $id );
 
     unless ($events) {
-        return { events => [] };
+        return [];
     }
 
     # rearrange the data structure to return
     Data::Structure::Util::unbless($events);
 
     foreach my $event ( @{$events} ) {
-        $event->{_meta}{id}             = delete $event->{id};
-        $event->{_meta}{collections_id} = delete $event->{collections_id};
-        $event->{_meta}{created_at}     = delete $event->{created_at};
-        $event->{_meta}{updated_at}     = delete $event->{updated_at};
 
         # this *should* be valid JSON already since we won't store it
         # if it's invalid.
         # this might be better to wrap in a try/catch block to be sure.
         my $data = decode_json( delete $event->{data} );
         foreach ( keys %{$data} ) {
-            $event->{$_} = $data->{$_};
+            $event->{data}{$_} = $data->{$_};
         }
     }
 
-    my $return_data = { events => $events };
-
-    return $return_data;
+    return $events;
 };
 
 post '/collections/:id/events' => sub {
@@ -318,19 +274,11 @@ post '/collections/:id/events' => sub {
 
     $event->store();
 
-    # rearrange the data structure to return
     Data::Structure::Util::unbless($event);
-
-    $event->{_meta}{id}             = delete $event->{id};
-    $event->{_meta}{collections_id} = delete $event->{collections_id};
-    $event->{_meta}{created_at}     = delete $event->{created_at};
-    $event->{_meta}{updated_at}     = delete $event->{updated_at};
 
     delete $event->{data};
 
-    my $return_data = { events => [$event] };
-
-    return $return_data;
+    return $event;
 };
 
 options '/collections/:collections_id/events/:events_id' => sub {
@@ -362,25 +310,17 @@ get '/collections/:collections_id/events/:events_id' => sub {
         return Trackability::API::Response::not_found();
     }
 
-    # rearrange the data structure to return
     Data::Structure::Util::unbless($events);
-
-    $events->[0]{_meta}{id}             = delete $events->[0]{id};
-    $events->[0]{_meta}{collections_id} = delete $events->[0]{collections_id};
-    $events->[0]{_meta}{created_at}     = delete $events->[0]{created_at};
-    $events->[0]{_meta}{updated_at}     = delete $events->[0]{updated_at};
 
     # this *should* be valid JSON already since we won't store it
     # if it's invalid.
     # this might be better to wrap in a try/catch block to be sure.
     my $data = decode_json( delete $events->[0]{data} );
     foreach ( keys %{$data} ) {
-        $events->[0]{$_} = $data->{$_};
+        $events->[0]{data}{$_} = $data->{$_};
     }
 
-    my $return_data = { events => [ $events->[0] ] };
-
-    return $return_data;
+    return $events->[0];
 };
 
 1;

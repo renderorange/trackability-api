@@ -85,17 +85,11 @@ ok( $response->is_success, sprintf( '%s %s was successful', $method, $endpoint )
 my $decoded_content = JSON::decode_json $content;
 my $expected_content =
     {
-        'events' => [
-            {
-                '_meta' => {
-                    'id' => $event_one->id,
-                    'collections_id' => $event_one->collections_id,
-                    'updated_at' => $event_one->updated_at,
-                    'created_at' => $event_one->created_at,
-                },
-                %data,
-            },
-        ],
+        id => $event_one->id,
+        collections_id => $event_one->collections_id,
+        updated_at => $event_one->updated_at,
+        created_at => $event_one->created_at,
+        data => \%data,
     };
 
 cmp_deeply( $decoded_content, $expected_content, 'decoded content contains expected data structure' );

@@ -31,18 +31,9 @@ get '/users/:id' => sub {
         return Trackability::API::Response::forbidden();
     }
 
-    # rearrange the data structure to return
     Data::Structure::Util::unbless($users);
 
-    $users->[0]{_meta}{id}         = delete $users->[0]{id};
-    $users->[0]{_meta}{name}       = delete $users->[0]{name};
-    $users->[0]{_meta}{email}      = delete $users->[0]{email};
-    $users->[0]{_meta}{created_at} = delete $users->[0]{created_at};
-    $users->[0]{_meta}{updated_at} = delete $users->[0]{updated_at};
-
-    my $return_data = { users => [ $users->[0] ] };
-
-    return $return_data;
+    return $users->[0];
 };
 
 put '/users/:id' => sub {
@@ -99,18 +90,9 @@ put '/users/:id' => sub {
 
     $users->[0]->store();
 
-    # rearrange the data structure to return
     Data::Structure::Util::unbless($users);
 
-    $users->[0]{_meta}{id}         = delete $users->[0]{id};
-    $users->[0]{_meta}{name}       = delete $users->[0]{name};
-    $users->[0]{_meta}{email}      = delete $users->[0]{email};
-    $users->[0]{_meta}{created_at} = delete $users->[0]{created_at};
-    $users->[0]{_meta}{updated_at} = delete $users->[0]{updated_at};
-
-    my $return_data = { users => [ $users->[0] ] };
-
-    return $return_data;
+    return $users->[0];
 };
 
 1;

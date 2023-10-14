@@ -37,17 +37,11 @@ ok( $response->is_success, sprintf( '%s %s was successful', $method, $endpoint )
 my $decoded_content = JSON::decode_json $content;
 my $expected_content =
     {
-        'users' => [
-            {
-                '_meta' => {
-                    'id' => $user_one->id,
-                    'name' => $user_one->name,
-                    'email' => $user_one->email,
-                    'updated_at' => $user_one->updated_at,
-                    'created_at' => $user_one->created_at,
-                }
-            }
-        ],
+        id => $user_one->id,
+        name => $user_one->name,
+        email => $user_one->email,
+        updated_at => $user_one->updated_at,
+        created_at => $user_one->created_at,
     };
 
 cmp_deeply( $decoded_content, $expected_content, 'decoded content contains expected data structure' );

@@ -48,19 +48,14 @@ my $content  = $response->content;
 ok( $response->is_success, sprintf( '%s %s was successful', $method, $endpoint ) );
 
 my $decoded_content = JSON::decode_json $content;
-my $expected_content = {
-    collections => [
-        {
-            '_meta' => {
-                id => $collection_one->id + 1,
-                name => 'test collection two',
-                users_id => $user_one->id,
-                created_at => ignore(),
-                updated_at => ignore(),
-            }
-        }
-    ],
-};
+my $expected_content =
+    {
+        id => $collection_one->id + 1,
+        name => 'test collection two',
+        users_id => $user_one->id,
+        created_at => ignore(),
+        updated_at => ignore(),
+    };
 
 cmp_deeply( $decoded_content, $expected_content, 'content contains expected data structure' );
 
