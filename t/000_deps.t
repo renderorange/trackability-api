@@ -30,7 +30,6 @@ my @required_modules = qw{
     Session::Storage::Secure
     Starman
     strictures
-    Term::ReadKey
     Throwable::Error
     Try::Tiny
     Types::Common::Numeric

@@ -24,7 +24,6 @@ requires 'Scalar::Util' => 0;
 requires 'Session::Storage::Secure' => 0;
 requires 'Starman' => 0;
 requires 'strictures' => 0;
-requires 'Term::ReadKey' => 0;
 requires 'Throwable::Error' => 0;
 requires 'Try::Tiny' => 0;
 requires 'Types::Common::Numeric' => 0;

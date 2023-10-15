@@ -35,7 +35,6 @@ Scalar::Util
 Session::Storage::Secure
 Starman
 strictures
-Term::ReadKey
 Throwable::Error
 Try::Tiny
 Types::Common::Numeric
