@@ -226,6 +226,84 @@ $ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKE
 ]
 ```
 
+### Get events created between dates
+
+#### Between two dates
+
+```
+GET /collections/:collections_id/events?created=:timestamp&created=:timestamp
+```
+
+```
+$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" 'localhost:5000/collections/6/events?created=1697469969&created=1697469977'
+[
+   {
+      "updated_at" : 1697469969,
+      "data" : {
+         "one" : 1,
+         "two" : 2
+      },
+      "id" : 1,
+      "created_at" : 1697469969,
+      "collections_id" : 6
+   },
+   {
+      "created_at" : 1697469977,
+      "collections_id" : 6,
+      "updated_at" : 1697469977,
+      "data" : {
+         "one" : 1,
+         "two" : 2
+      },
+      "id" : 2
+   }
+]
+```
+
+#### Before a date
+
+```
+GET /collections/:collections_id/events?created=&created=:timestamp
+```
+
+```
+$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" 'localhost:5000/collections/6/events?created=&created=1697469976'
+[
+   {
+      "id" : 1,
+      "data" : {
+         "one" : 1,
+         "two" : 2
+      },
+      "updated_at" : 1697469969,
+      "collections_id" : 6,
+      "created_at" : 1697469969
+   }
+]
+```
+
+#### After a date
+
+```
+GET /collections/:collections_id/events?created=:timestamp&created=
+```
+
+```
+$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" 'localhost:5000/collections/6/events?created=1697469970&created='
+[
+   {
+      "collections_id" : 6,
+      "created_at" : 1697469977,
+      "id" : 2,
+      "data" : {
+         "two" : 2,
+         "one" : 1
+      },
+      "updated_at" : 1697469977
+   }
+]
+```
+
 ### Get event
 
 ```
