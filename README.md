@@ -231,11 +231,11 @@ $ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKE
 #### Between two dates
 
 ```
-GET /collections/:collections_id/events?created=:timestamp&created=:timestamp
+GET /collections/:collections_id/events?created_at=:timestamp&created_at=:timestamp
 ```
 
 ```
-$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" 'localhost:5000/collections/6/events?created=1697469969&created=1697469977'
+$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" 'localhost:5000/collections/6/events?created_at=1697469969&created_at=1697469977'
 [
    {
       "updated_at" : 1697469969,
@@ -263,11 +263,11 @@ $ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKE
 #### Before a date
 
 ```
-GET /collections/:collections_id/events?created=&created=:timestamp
+GET /collections/:collections_id/events?created_at=&created_at=:timestamp
 ```
 
 ```
-$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" 'localhost:5000/collections/6/events?created=&created=1697469976'
+$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" 'localhost:5000/collections/6/events?created_at=&created_at=1697469976'
 [
    {
       "id" : 1,
@@ -285,11 +285,11 @@ $ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKE
 #### After a date
 
 ```
-GET /collections/:collections_id/events?created=:timestamp&created=
+GET /collections/:collections_id/events?created_at=:timestamp&created_at=
 ```
 
 ```
-$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" 'localhost:5000/collections/6/events?created=1697469970&created='
+$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" 'localhost:5000/collections/6/events?created_at=1697469970&created_at='
 [
    {
       "collections_id" : 6,

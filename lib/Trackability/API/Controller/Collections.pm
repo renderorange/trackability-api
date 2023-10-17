@@ -182,7 +182,7 @@ get '/collections/:id/events' => sub {
     if ( keys %{$query} ) {
         my @valid_keys = qw(
             id
-            created
+            created_at
         );
 
         foreach my $key ( keys %{$query} ) {
@@ -192,17 +192,17 @@ get '/collections/:id/events' => sub {
         }
 
         # validate the created query
-        if ( defined $query->{created} ) {
+        if ( defined $query->{created_at} ) {
 
             # to allow for multiple definitions of created, we need to specifically retrieve it from the query.
             # the query_parameters method returns a hashref, which will overwrite the first definition.
-            my @created = query_parameters->get_all('created');
+            my @created = query_parameters->get_all('created_at');
 
             if ( List::MoreUtils::any { $_ && $_ !~ /^\d+$/ } @created ) {
-                return Trackability::API::Response::bad_request('The created parameter must be an epoch timestamp.');
+                return Trackability::API::Response::bad_request('The created_at parameter must be an epoch timestamp.');
             }
 
-            delete $query->{created};
+            delete $query->{created_at};
 
             # if only 1 is defined, assume they want an exact match for that date to the created_at column.
             # if 2 are defined, then they want between created[0] and created[1].

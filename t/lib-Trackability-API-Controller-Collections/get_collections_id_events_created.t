@@ -74,7 +74,7 @@ $event_three->store();
 
 note( 'exact match on created date' );
 my $method   = 'GET';
-my $endpoint = '/collections/1/events?created=' . $event_three->created_at;
+my $endpoint = '/collections/1/events?created_at=' . $event_three->created_at;
 
 my $app  = Trackability::API->to_app;
 my $test = Plack::Test->create( $app );
@@ -102,7 +102,7 @@ my $expected_content =
 cmp_deeply( $decoded_content, $expected_content, 'decoded content contains expected data structure' );
 
 note( 'between two created dates' );
-$endpoint = '/collections/1/events?created=' . $event_one->created_at . '&created=' . $event_three->created_at;
+$endpoint = '/collections/1/events?created_at=' . $event_one->created_at . '&created_at=' . $event_three->created_at;
 
 $request = HTTP::Request->new( $method, $endpoint );
 $request->header( 'Authorization' => 'Token ' . $key );
@@ -134,7 +134,7 @@ $expected_content =
 cmp_deeply( $decoded_content, $expected_content, 'decoded content contains expected data structure' );
 
 note( 'all newer than or equal to created date' );
-$endpoint = '/collections/1/events?created=&created=' . $event_one->created_at;
+$endpoint = '/collections/1/events?created_at=&created_at=' . $event_one->created_at;
 
 $request = HTTP::Request->new( $method, $endpoint );
 $request->header( 'Authorization' => 'Token ' . $key );
@@ -159,7 +159,7 @@ $expected_content =
 cmp_deeply( $decoded_content, $expected_content, 'decoded content contains expected data structure' );
 
 note( 'all older than or equal to created date' );
-$endpoint = '/collections/1/events?created=' . $event_three->created_at . '&created=';
+$endpoint = '/collections/1/events?created_at=' . $event_three->created_at . '&created_at=';
 
 $request = HTTP::Request->new( $method, $endpoint );
 $request->header( 'Authorization' => 'Token ' . $key );
