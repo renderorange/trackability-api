@@ -84,7 +84,22 @@ $ vi .trackability-apirc
 $ chmod 600 .trackability-apirc
 ```
 
-## update and install the systemd file
+## run the development server
+
+To run this project using the included development server:
+
+```
+~/git/trackability-api (master) $ ./app/development
+HTTP::Server::PSGI: Accepting connections at http://0:5000/
+```
+
+The development server listens by default over port 5000 on localhost and IPv4 interfaces.
+
+## install as a running service
+
+To setup this project running behind Apache2 as a frontend:
+
+### update and install the systemd file
 
 ```
 # cp -a /home/trackability/git/trackability-api/app/trackability-api.service /etc/systemd/system/
@@ -92,16 +107,23 @@ $ chmod 600 .trackability-apirc
 # systemctl enable trackability-api
 ```
 
-## create the log directory
+### create the log directory
 
 ```
 # mkdir /var/log/trackability
 # chown root.trackability /var/log/trackability
 ```
 
-## add a vhost entry
+### add a vhost entry
 
-(sample httpd.conf proxy and proxypass entry is included in the app dir)
+A sample httpd.conf proxy and proxypass entry is included in the app dir.  This isn't a complete apache vhost entry example, however.  Please setup the vhost accordingly for your apache configuration.
+
+### start the service through systemctl and reload apache2
+
+```
+# systemctl start trackability-api
+# systemctl reload apache2
+```
 
 ## create a new user
 
