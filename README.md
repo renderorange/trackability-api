@@ -24,7 +24,11 @@ POST /collections
 ```
 
 ```
-$ curl -X POST -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" -d '{"name":"example collection"}' localhost:5000/collections
+$ curl -X POST \ 
+-H 'Content-Type: application/json' \ 
+-H "Authorization: Token $TOKEN" \ 
+-d '{"name":"example collection"}' \ 
+localhost:5000/collections
 {
    "name" : "example collection",
    "id" : 6,
@@ -41,7 +45,10 @@ GET /collections
 ```
 
 ```
-$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" localhost:5000/collections
+$ curl -X GET \ 
+-H 'Content-Type: application/json' \ 
+-H "Authorization: Token $TOKEN" \ 
+localhost:5000/collections
 [
    {
       "name" : "example collection",
@@ -67,7 +74,10 @@ GET /collections/:collections_id
 ```
 
 ```
-$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" localhost:5000/collections/6
+$ curl -X GET \ 
+-H 'Content-Type: application/json' \ 
+-H "Authorization: Token $TOKEN" \ 
+localhost:5000/collections/6
 {
    "name" : "example collection",
    "updated_at" : 1697403162,
@@ -84,7 +94,11 @@ PUT /collections/:collections_id
 ```
 
 ```
-$ curl -X PUT -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" -d '{"name":"updated example collection"}' localhost:5000/collections/6
+$ curl -X PUT \ 
+-H 'Content-Type: application/json' \ 
+-H "Authorization: Token $TOKEN" \ 
+-d '{"name":"updated example collection"}' \ 
+localhost:5000/collections/6
 {
    "updated_at" : 1697403559,
    "created_at" : 1697403162,
@@ -101,7 +115,11 @@ POST /collections/:collections_id/events
 ```
 
 ```
-$ curl -X POST -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" -d '{"one":1, "two":2}' localhost:5000/collections/6/events
+$ curl -X POST \ 
+-H 'Content-Type: application/json' \ 
+-H "Authorization: Token $TOKEN" \ 
+-d '{"one":1, "two":2}' \ 
+localhost:5000/collections/6/events
 {
    "id" : 4,
    "updated_at" : 1697403750,
@@ -117,7 +135,10 @@ GET /collections/:collections_id/events
 ```
 
 ```
-$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" localhost:5000/collections/6/events
+$ curl -X GET \ 
+-H 'Content-Type: application/json' \ 
+-H "Authorization: Token $TOKEN" \ 
+localhost:5000/collections/6/events
 [
    {
       "collections_id" : 6,
@@ -151,7 +172,10 @@ GET /collections/:collections_id/events?created_at=:timestamp&created_at=:timest
 ```
 
 ```
-$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" 'localhost:5000/collections/6/events?created_at=1697469969&created_at=1697469977'
+$ curl -X GET \ 
+-H 'Content-Type: application/json' \ 
+-H "Authorization: Token $TOKEN" \ 
+'localhost:5000/collections/6/events?created_at=1697469969&created_at=1697469977'
 [
    {
       "updated_at" : 1697469969,
@@ -183,7 +207,10 @@ GET /collections/:collections_id/events?created_at=&created_at=:timestamp
 ```
 
 ```
-$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" 'localhost:5000/collections/6/events?created_at=&created_at=1697469976'
+$ curl -X GET \ 
+-H 'Content-Type: application/json' \ 
+-H "Authorization: Token $TOKEN" \ 
+'localhost:5000/collections/6/events?created_at=&created_at=1697469976'
 [
    {
       "id" : 1,
@@ -205,7 +232,10 @@ GET /collections/:collections_id/events?created_at=:timestamp&created_at=
 ```
 
 ```
-$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" 'localhost:5000/collections/6/events?created_at=1697469970&created_at='
+$ curl -X GET \ 
+-H 'Content-Type: application/json' \ 
+-H "Authorization: Token $TOKEN" \ 
+'localhost:5000/collections/6/events?created_at=1697469970&created_at='
 [
    {
       "collections_id" : 6,
@@ -227,7 +257,10 @@ GET /collections/:collections_id/events/:events_id
 ```
 
 ```
-$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" localhost:5000/collections/6/events/4
+$ curl -X GET \ 
+-H 'Content-Type: application/json' \ 
+-H "Authorization: Token $TOKEN" \ 
+localhost:5000/collections/6/events/4
 {
    "data" : {
       "one" : 1,
@@ -247,7 +280,10 @@ GET /users/:users_id
 ```
 
 ```
-$ curl -X GET -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" localhost:5000/users/1
+$ curl -X GET \ 
+-H 'Content-Type: application/json' \ 
+-H "Authorization: Token $TOKEN" \ 
+localhost:5000/users/1
 {
    "id" : 1,
    "updated_at" : 1697309103,
@@ -264,7 +300,11 @@ PUT /users/:users_id
 ```
 
 ```
-$ curl -X PUT -H 'Content-Type: application/json' -H "Authorization: Token $TOKEN" -d '{"name":"Test Testerton","email":"test@testerton.com"}' localhost:5000/users/1
+$ curl -X PUT \ 
+-H 'Content-Type: application/json' \ 
+-H "Authorization: Token $TOKEN" \ 
+-d '{"name":"Test Testerton","email":"test@testerton.com"}' \ 
+localhost:5000/users/1
 {
    "id" : 1,
    "created_at" : 1697405257,
