@@ -90,8 +90,11 @@ hook after => sub {
     undef vars->{users_id};
 };
 
-# TODO: add on_route_exception to catch any uncaught exceptions
-# but before that, add in exception handling for any of the known routes and methods.
-# we don't want to rely on the catch all to handle exceptions.
+hook on_route_exception => sub {
+    my $app       = shift;
+    my $exception = shift;
+
+    log( 'error', $exception );
+};
 
 1;
