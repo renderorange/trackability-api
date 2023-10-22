@@ -12,12 +12,6 @@ use Trackability::API::Controller::Collections ();
 
 our $VERSION = '0.001';
 
-BEGIN {
-    # TODO: this isn't being used here, and can be removed until it is.
-    require Trackability::API::Config;
-    my $conf = Trackability::API::Config->get();
-}
-
 any qr{.*} => sub {
 
     # throw 404 for any undefined method or route.
