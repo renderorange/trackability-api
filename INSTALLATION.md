@@ -103,7 +103,7 @@ To setup this project running behind Apache2 as a frontend:
 
 ```
 # cp -a /home/trackability/git/trackability-api/app/trackability-api.service /etc/systemd/system/
-# chown trackability:trackability trackability-api.service /etc/systemd/system/
+# chown root.root /etc/systemd/system/trackability-api.service
 # systemctl enable trackability-api
 ```
 
@@ -113,6 +113,8 @@ To setup this project running behind Apache2 as a frontend:
 # mkdir /var/log/trackability
 # chown root.trackability /var/log/trackability
 ```
+
+### setup logrotate for trackability-api logs
 
 ### add a vhost entry
 
